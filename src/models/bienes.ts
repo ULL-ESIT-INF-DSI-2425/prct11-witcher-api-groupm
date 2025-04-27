@@ -13,6 +13,7 @@ interface BienesInterface extends Document {
   material: "Acero de Mahakam" | "Cuero endurecido" | "Esencia mágica" | "Mutágenos de bestias antiguas"
   peso: number
   valor: number
+  stock: number
 }
 
 const BienesSchema = new Schema<BienesInterface>({
@@ -44,6 +45,11 @@ const BienesSchema = new Schema<BienesInterface>({
   valor: {
     type: Number,
     required: true,
+    min: 0,
+  },
+  stock: {
+    type: Number,
+    requiered: true,
     min: 0,
   },
 });
