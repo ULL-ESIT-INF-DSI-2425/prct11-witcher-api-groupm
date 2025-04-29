@@ -30,4 +30,4 @@ const CazadorSchema = new Schema<CazadorInterface>({
   },
 });
 
-export const Cazador = model<CazadorInterface>('Bienes', CazadorSchema);
+export const Cazador = model<CazadorInterface>('Cazadores', CazadorSchema);

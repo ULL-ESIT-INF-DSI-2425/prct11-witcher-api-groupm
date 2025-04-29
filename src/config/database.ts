@@ -1,0 +1,12 @@
+import mongoose from 'mongoose';
+import chalk from 'chalk';
+
+export const connectDB = async () => {
+  try {
+    await mongoose.connect('mongodb://127.0.0.1:27017/witcher');
+    console.log(chalk.green('Conectado a MongoDB'));
+  } catch (error) {
+    console.error(chalk.red('Error conectando a MongoDB:', error));
+    process.exit(1);
+  }
+};
