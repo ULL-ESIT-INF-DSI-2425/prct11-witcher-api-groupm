@@ -28,6 +28,7 @@
   "homepage": "https://github.com/ULL-ESIT-INF-DSI-2425/prct04-arrays-tuples-enums-DanielEnriqueGomezAlcala#readme",
   "devDependencies": {
     "@eslint/js": "^9.20.0",
+    "@types/express": "^5.0.1",
     "@types/mongoose": "^5.11.96",
     "@types/yargs": "^17.0.33",
     "@vitest/coverage-v8": "^3.0.5",
