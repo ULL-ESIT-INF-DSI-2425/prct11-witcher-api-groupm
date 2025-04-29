@@ -13,5 +13,5 @@ app.get('/', (_, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando em https://prct11-witcher-api-groupm.onrender.com:${port}`);
 });
