@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000; // Usa el puerto de la variable de entorn
 app.use(express.json());
 
 app.use('/cazadores', router); // Usar el router de cazadores
+app.use('/merchants', router); // Usar el router de mercaderes
 
 connectDB(); // Conectar a la base de datos
 

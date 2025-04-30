@@ -31,4 +31,4 @@ const MercaderSchema = new Schema<MercaderInterface> ({
   },
 })
 
-export const Mercader = model<MercaderInterface>('Bienes', MercaderSchema);
+export const Mercader = model<MercaderInterface>('Mercaderes', MercaderSchema);
