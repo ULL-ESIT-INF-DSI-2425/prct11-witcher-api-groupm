@@ -1,6 +1,6 @@
 import express from 'express';
 import { connectDB } from './config/database.js'; // Asegúrate de que la ruta sea correcta
-import router from './routers/cazadores.js';
+import router from './routers/cazadoresRouter.js';
 import { bienRouter } from './routers/bienesRouter.js';
 import { defaultRouter } from './routers/defaultRouter.js';
 
