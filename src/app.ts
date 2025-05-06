@@ -4,6 +4,7 @@ import { defaultRouter } from './routers/defaultRouter.js';
 import { routerBien } from './routers/bienesRouter.js';
 import { routerCazador } from './routers/cazadoresRouter.js';
 import { routerMercader } from './routers/mercaderesRouter.js';
+import { routerTransaccion } from './routers/transaccionRouter.js';
 
 export const app = express();
 const port = process.env.PORT || 3000; // Usa el puerto de la variable de entorno o 3000 como predeterminado
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/hunters', routerCazador); // Usar el router de cazadores
 app.use('/merchants', routerMercader); // Usar el router de mercaderes
 app.use('/goods', routerBien); // Usar el router de mercaderes
+app.use('/transactions', routerTransaccion);
 
 app.use(defaultRouter) // Usar el router por defecto para interceptar rutas no implementadas
 

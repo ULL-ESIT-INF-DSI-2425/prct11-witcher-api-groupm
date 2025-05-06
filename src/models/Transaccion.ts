@@ -10,9 +10,12 @@ interface transaccionInterface {
   fecha: Date
   tipo: 'Compra' | 'Venta'
   bienes: {
-            nombre: string 
-            cantidad: number; 
-            costo_unidad: number; 
+            nombre: string
+            descripcion: string
+            material: "Acero de Mahakam" | "Cuero endurecido" | "Esencia mágica" | "Mutágenos de bestias antiguas"
+            peso: number
+            valor: number
+            cantidad: number
           }[]
   personaTipo: "Mercader" | "Cazador"
   persona: CazadorInterface | MercaderInterface;
@@ -35,11 +38,23 @@ const transaccionSchema = new Schema<transaccionInterface>({
         type: String,
         required: true,
       },
-      cantidad: {
+      descripcion: {
+        type: String,
+      },
+      material: {
+        type: String,
+        enum: ["Acero de Mahakam", "Cuero endurecido", "Esencia mágica", "Mutágenos de bestias antiguas"],
+        required: true,
+      },
+      peso: {
         type: Number,
         required: true,
       },
-      costo_unidad: {
+      valor: {
+        type: Number,
+        required: true,
+      },
+      cantidad: {
         type: Number,
         required: true,
       },
@@ -68,7 +83,7 @@ const transaccionSchema = new Schema<transaccionInterface>({
     type: Number,
     required: true,
     default: function (this: transaccionInterface) {
-      return this.bienes.reduce((total, item) => total + item.cantidad * item.costo_unidad, 0);
+      return this.bienes.reduce((total, item) => total + item.cantidad * item.valor, 0);
     },
   },
 })
