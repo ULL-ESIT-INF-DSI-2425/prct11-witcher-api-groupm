@@ -5,7 +5,7 @@ import { routerBien } from './routers/bienesRouter.js';
 import { routerCazador } from './routers/cazadoresRouter.js';
 import { routerMercader } from './routers/mercaderesRouter.js';
 
-const app = express();
+export const app = express();
 const port = process.env.PORT || 3000; // Usa el puerto de la variable de entorno o 3000 como predeterminado
 
 // Middleware to parse JSON
@@ -29,5 +29,5 @@ app.get('/', (_, res) => {
  * @param port - Puerto en el que se ejecutará el servidor
  */
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando en http://localhost:${port}`);
 });

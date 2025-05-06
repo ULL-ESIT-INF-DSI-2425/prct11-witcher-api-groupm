@@ -37,7 +37,7 @@ export const obtenerCazadores = async (req: Request, res: Response) => {
     } else {
       cazador = await Cazador.find();
     }
-    if (!cazador) {
+    if (!cazador || (Array.isArray(cazador) && cazador.length === 0)) {
       res.status(404).send("No existe cazador con ese nombre, o no existen cazadores");
       return;
     }
@@ -56,10 +56,6 @@ export const obtenerCazadores = async (req: Request, res: Response) => {
 export const obtenerCazadorID = async (req: Request, res: Response) => {
   try {
     const cazador = await Cazador.findById(req.params.id);
-    if (!cazador) {
-      res.status(404).send("No existe cazador con ese ID");
-      return;
-    }
     res.status(200).json(cazador);
   } catch (error) {
     res.status(400).json(error);
@@ -92,14 +88,12 @@ export const actualizarCazador = async (req: Request, res: Response) => {
     }
     else {
       try {
-        const cazador = await Cazador.findOneAndUpdate({nombre: req.query.nombre.toString()}, req.body, {new: true, runValidators: true})
+        const cazador = await Cazador.findOneAndUpdate({nombre: req.query.nombre.toString()}, req.body, {new: true, runValidators: true});
         if (!cazador) {
           res.status(404).send("No existe cazador con ese nombre");
           return;
         }
-        else {
-          res.send(cazador);
-        }
+        res.send(cazador);
       } catch (error) {
         res.status(400).send(error);
       }
@@ -133,12 +127,7 @@ export const actualizarCazadorID = async (req: Request, res: Response) => {
           new: true,
           runValidators: true,
         });
-        if (!cazador) {
-          res.status(404).send("No existe cazador con ese ID");
-          return;
-        } else {
-          res.send(cazador);
-        }
+        res.send(cazador);
       } catch (error) {
         res.status(400).send(error);
       }
@@ -179,13 +168,7 @@ export const borrarCazador = async (req: Request, res: Response) => {
 export const borrarCazadorID = async (req: Request, res: Response) => {
   try {
     const cazador = await Cazador.findByIdAndDelete(req.params.id);
-    if (!cazador) {
-      res.status(404).send("No existe cazador con ese nombre ID");
-      return;
-    }
-    else {
-      res.status(200).send(cazador);
-    }
+    res.status(200).send(cazador);
   } catch (error) {
     res.status(400).send(error);
   }

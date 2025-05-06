@@ -42,7 +42,7 @@ export const obtenerBienes = async (req: Request, res: Response) => {
     } else {
       bienes = await Bien.find();
     }
-    if (bienes.length === 0) {
+    if (!bienes || (Array.isArray(bienes) && bienes.length === 0)) {
       res.status(404).send("No existe ningún bien con el campo especificado, o no existe ningún bien");
       return;
     }
@@ -61,10 +61,6 @@ export const obtenerBienes = async (req: Request, res: Response) => {
 export const obtenerBienID = async (req: Request, res: Response) => {
   try {
     const bien = await Bien.findById(req.params.id)
-    if (!bien) {
-      res.status(404).send("No existe bien con ese ID");
-      return
-    }
     res.status(200).send(bien)
   } catch (error) {
     res.status(500).send(error)
@@ -143,11 +139,7 @@ export const actualizarBienID = async (req: Request, res: Response) => {
           new: true,
           runValidators: true,
         });
-        if (!bien) {
-          res.status(404).send();
-        } else {
-          res.send(bien);
-        }
+        res.send(bien);
       } catch (error) {
         res.status(400).send(error);
       }
@@ -196,11 +188,7 @@ export const borrarBien = async (req: Request, res: Response) => {
 export const borrarBienID = async (req: Request, res: Response) => {
   try {
     const bien  = await Bien.findByIdAndDelete(req.params.id)
-    if (!bien) {
-      res.status(404).send("Ha ocurrido un error a la hora de borrar un bien");
-    } else {
-      res.status(200).send(bien);
-    }
+    res.status(200).send(bien);
   } catch (error) {
     res.status(400).send(error)
   }

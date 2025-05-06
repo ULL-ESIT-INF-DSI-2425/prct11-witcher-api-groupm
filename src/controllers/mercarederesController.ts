@@ -37,7 +37,7 @@ export const obtenerMercaderes = async (req: Request, res: Response) => {
     } else {
       mercader = await Mercader.find();
     }
-    if (!mercader) {
+    if (!mercader || (Array.isArray(mercader) && mercader.length === 0)) {
       res.status(404).send("No existe mercader con ese nombre");
       return;
     }
@@ -56,10 +56,6 @@ export const obtenerMercaderes = async (req: Request, res: Response) => {
 export const obetenerMercaderID = async (req: Request, res: Response) => {
   try {
     const mercader = await Mercader.findById(req.params.id);
-    if (!mercader) {
-      res.status(404).send("No existe mercader con ese ID");
-      return;
-    }
     res.status(200).send(mercader);
   } catch (error) {
     res.status(500).send(error);
@@ -132,11 +128,7 @@ export const actualizarMercaderID = async (req: Request, res: Response) => {
           new: true,
           runValidators: true,
         });
-        if (!mercader) {
-          res.status(404).send("No existe mercader con ese ID");
-        } else {
-          res.send(mercader);
-        }
+        res.send(mercader);
       } catch (error) {
         res.status(400).send(error);
       }
@@ -176,11 +168,7 @@ export const borrarMercader = async (req: Request, res: Response) => {
 export const borrarMercaderID = async (req: Request, res: Response) => {
   try {
     const mercader = await Mercader.findByIdAndDelete(req.params.id);
-    if (!mercader) {
-      res.status(404).send("No existe mercader con ese ID");
-    } else {
-      res.status(200).send(mercader);
-    }
+    res.status(200).send(mercader);
   } catch (error) {
     res.status(400).json(error);
   }
