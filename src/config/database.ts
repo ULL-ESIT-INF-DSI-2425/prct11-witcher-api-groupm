@@ -3,6 +3,7 @@ import chalk from 'chalk';
 
 /**
  * Conecta a la base de datos MongoDB
+ * @throws error - Error si no se puede conectar
  */
 export const connectDB = async () => {
   try {
