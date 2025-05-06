@@ -5,7 +5,7 @@
 
 import { Document, Schema, model } from 'mongoose';
 
-interface CazadorInterface extends Document {
+export interface CazadorInterface extends Document {
   nombre: string
   raza: "Humano" | "Elfo" | "Enano" | "Hechicero"
   ubicacion: "Novigrado" | "Velen" | "Kaer Trolde"

@@ -5,7 +5,7 @@
 
 import { Document, Schema, model } from 'mongoose';
 
-interface MercaderInterface extends Document {
+export interface MercaderInterface extends Document {
   nombre: string
   tipo: "Herrero" | "Alquimista" | "Mercader general"
   ubicacion: "Novigrado" | "Velen" | "Kaer Trolde"
