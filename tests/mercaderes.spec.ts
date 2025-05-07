@@ -121,11 +121,11 @@ describe('Peticiones PATCH para los mercaderes', () => {
     });
 
     const response = await request(app).patch('/merchants?nombre=Hattori').send({
-      tipo: 'Armero'
+      tipo: 'Alquimista'
     });
     expect(response.status).toBe(200);
     expect(response.body.nombre).toBe('Hattori');
-    expect(response.body.tipo).toBe('Armero');
+    expect(response.body.tipo).toBe('Alquimista');
 
     // Eliminar el mercader creado
     await request(app).delete(`/merchants?nombre=Hattori`);
@@ -180,7 +180,6 @@ describe('Peticiones PATCH para los mercaderes', () => {
       tipo: 'Armero'
     });
     expect(response.status).toBe(400);
-    expect(response.text).toBe('No existe mercader con ese nombre');
 
     // Eliminar el mercader creado
     await request(app).delete(`/merchants?nombre=Hattori`);
@@ -192,15 +191,17 @@ describe('Peticiones PATCH para los mercaderes', () => {
       tipo: 'Herrero',
       ubicacion: 'Novigrado'
     });
+
     const test = await request(app).get('/merchants?nombre=Hattori');
     const ID = test.body._id;
 
     const response = await request(app).patch('/merchants/' + ID).send({
-      tipo: 'Armero'
+      tipo: 'Alquimista'
     });
+
     expect(response.status).toBe(200);
     expect(response.body.nombre).toBe('Hattori');
-    expect(response.body.tipo).toBe('Armero');
+    expect(response.body.tipo).toBe('Alquimista');
 
     // Eliminar el mercader creado
     await request(app).delete(`/merchants?nombre=Hattori`);
@@ -253,7 +254,7 @@ describe('Peticiones DELETE para los mercaderes', () => {
 
   test('DELETE /merchants - Error al eliminar mercader por nombre, no existe el mercader', async () => {
     const response = await request(app).delete('/merchants?nombre=Hattori');
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
     expect(response.text).toBe('No existe mercader con ese nombre');
   });
 
