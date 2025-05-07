@@ -41,7 +41,7 @@ export const obtenerMercaderes = async (req: Request, res: Response) => {
       res.status(404).send("No existe mercader con ese nombre");
       return;
     }
-    res.json(mercader);
+    res.status(200).send(mercader);
   } catch {
     res.status(500).json({ error: "Nombre inválido o error al buscar" });
   }
@@ -84,7 +84,7 @@ export const actualizarMercader = async (req: Request, res: Response) => {
     const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
     if (!isValidUpdate) {
-      res.status(400).send("El cambio no esta permitido");
+      res.status(400).send("El cambio no está permitido");
     }
     else {
       try {
@@ -96,7 +96,8 @@ export const actualizarMercader = async (req: Request, res: Response) => {
           res.send(mercader);
         }
       } catch (error) {
-        res.status(400).send(error);
+        // res.status(400).send(error);
+        res.status(400).send("No existe mercader con ese nombre");
       }
     }
   }
@@ -119,9 +120,7 @@ export const actualizarMercaderID = async (req: Request, res: Response) => {
     const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
     if (!isValidUpdate) {
-      res.status(400).send({
-        error: 'El cambio no está permitido',
-      });
+      res.status(400).send('El cambio no está permitido');
     } else {
       try {
         const mercader = await Mercader.findByIdAndUpdate(req.params.id, req.body, {
@@ -155,7 +154,7 @@ export const borrarMercader = async (req: Request, res: Response) => {
       res.status(200).send(mercader);
     }
   } catch (error) {
-    res.status(400).json(error);
+    res.status(400).send("No existe mercader con ese nombre");
   }                                   
 }
 
