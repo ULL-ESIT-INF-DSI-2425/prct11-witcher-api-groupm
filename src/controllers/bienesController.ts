@@ -63,7 +63,7 @@ export const obtenerBienID = async (req: Request, res: Response) => {
     const bien = await Bien.findById(req.params.id)
     res.status(200).send(bien)
   } catch (error) {
-    res.status(500).send(error)
+    res.status(400).send(error)
   }
 }
 
@@ -99,8 +99,8 @@ export const actualizarBien = async (req: Request, res: Response) => {
         } else {
           bien = await Bien.findOneAndUpdate({descripcion: req.query.descripcion}, req.body, {new: true, runValidators: true})
         }
-        if (!bien) {
-          res.status(404).send();
+        if (!bien || (Array.isArray(bien) && bien.length === 0)) {
+          res.status(404).send('No existe bien con ese nombre o descripcion');
         }
         else {
           res.send(bien);
@@ -121,18 +121,14 @@ export const actualizarBien = async (req: Request, res: Response) => {
  */
 export const actualizarBienID = async (req: Request, res: Response) => {
   if (!req.body) {
-    res.status(400).send({
-      error: 'Los campos a modificar deben ser proporcionados en el cuerpo de la solicitud',
-    });
+    res.status(400).send('Los campos a modificar deben ser proporcionados en el cuerpo de la solicitud');
   } else {
     const allowedUpdates = ['nombre', 'descripcion', 'material', 'peso', 'valor', 'stock'];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
     if (!isValidUpdate) {
-      res.status(400).send({
-        error: 'El cambio no está permitido',
-      });
+      res.status(400).send('El cambio no está permitido');
     } else {
       try {
         const bien = await Bien.findByIdAndUpdate(req.params.id, req.body, {
@@ -169,7 +165,7 @@ export const borrarBien = async (req: Request, res: Response) => {
       bien = await Bien.findOneAndDelete({descripcion: req.query.descripcion})
     }
     if (!bien) {
-      res.status(404).send()
+      res.status(404).send('No existe bien con ese nombre o descripcion');
     }
     else {
       res.status(200).send(bien)
