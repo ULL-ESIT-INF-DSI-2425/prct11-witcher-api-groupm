@@ -97,7 +97,7 @@ export const actualizarMercader = async (req: Request, res: Response) => {
         }
       } catch (error) {
         // res.status(400).send(error);
-        res.status(400).send("No existe mercader con ese nombre");
+        res.status(400).send(error);
       }
     }
   }
@@ -147,14 +147,14 @@ export const borrarMercader = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const mercader = await Mercader.findByIdAndDelete({nombre: req.query.nombre.toString()});
+    const mercader = await Mercader.findOneAndDelete({nombre: req.query.nombre.toString()});
     if (!mercader) {
       res.status(404).send("No existe mercader con ese nombre");
-    } else {
-      res.status(200).send(mercader);
-    }
+      return;
+    } 
+    res.status(200).send(mercader);
   } catch (error) {
-    res.status(400).send("No existe mercader con ese nombre");
+    res.status(400).send(error);
   }                                   
 }
 
