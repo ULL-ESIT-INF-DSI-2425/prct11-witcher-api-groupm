@@ -7,6 +7,13 @@ import { Transaccion } from '../models/Transaccion.js';
 
 export const routerTransaccion = express.Router();
 
+/**
+ * Función que actualiza el stock de los bienes
+ * 
+ * @param tipo - Tipo de operación que se realiza
+ * @param bienes - Array de bienes que queremos actualizar
+ * @returns Promesa
+ */
 async function updateStock(tipo: "Compra" | "Venta" | "DCompra" | "DVenta", bienes: any[]) {
   const resultado: Array<{ bien: Types.ObjectId; cantidad: number; costo_unidad: number }> = [];
   // para cada bien obtener los datos
@@ -54,6 +61,12 @@ async function updateStock(tipo: "Compra" | "Venta" | "DCompra" | "DVenta", bien
   // Actualizar elemento de bien
 }
 
+/**
+ * Función que suma el numero de items y devuelve un monto
+ * 
+ * @param items - JSON con información sobre la operación a realizar
+ * @returns - Suma de monto
+ */
 function sumarMonto(items: { 
   bien: Types.ObjectId; 
   cantidad: number; 
@@ -63,6 +76,9 @@ function sumarMonto(items: {
   return items.reduce((total, item) => total + item.cantidad * item.costo_unidad, 0);
 }
 
+/**
+ * Operación post para el router de transacción
+ */
 routerTransaccion.post("/", async (req, res) => {
   try {
     const persona = req.body.persona
@@ -70,7 +86,6 @@ routerTransaccion.post("/", async (req, res) => {
     if (!persona) {
       res.status(404).send({ error: 'Persona no encontrada' });
     }
-
     const {tipo, bienes, personaTipo} = req.body
     const items = await updateStock(tipo, bienes);
     const monto_total = sumarMonto(items);
@@ -86,10 +101,13 @@ routerTransaccion.post("/", async (req, res) => {
     res.status(201).send(transaccion)
   }
   catch(err) {
-    res.status(500).send(err);
+    res.status(500).send({ message: "Ha ocurrido un error al añadir la transacción.", error });
   }
 })
 
+/**
+ * Operación delete para el router de transacción
+ */
 routerTransaccion.delete("/:id", async (req, res) => {
   try {
     const transaccion = await Transaccion.findById(req.params.id)
@@ -109,6 +127,101 @@ routerTransaccion.delete("/:id", async (req, res) => {
     }
   }
   catch(error) {
-    res.status(500).send(error);
+    res.status(500).send({ message: "Ha ocurrido un error al eliminar la transacción.", error });
   }
 })
+
+/**
+ * Operación Get para el router de transacción a partir de un ID
+ */
+routerTransaccion.get("/:id", async (req, res) => {
+  try {
+    const transaccion = await Transaccion.findById(req.params.id);
+    if (!transaccion) {
+      res.status(404).send("Transacción no encontrada");
+    }
+    res.status(200).send(transaccion);
+  }
+  catch (error) {
+    res.status(500).send({ message: "Ha ocurrido un error al buscar la transacción por ID", error });
+  }
+})
+
+/**
+ * Operación Get para el router de transacción a través de query
+ */
+routerTransaccion.get("/", async (req, res) => {
+  try {
+    const { nombre, fecha_inicio, fecha_fin, tipo } = req.query;
+    const transacciones = await Transaccion.find();
+    const transacciones_encontradas = [];
+
+    for (const transaccion of transacciones) {
+      // Filtro por tipo y fechas si están presentes
+      if (tipo && transaccion.tipo !== tipo) {
+        continue;
+      } 
+      if (fecha_inicio && transaccion.fecha < new Date(fecha_inicio as string)) {
+        continue; 
+      }
+      if (fecha_fin && transaccion.fecha > new Date(fecha_fin as string)) {
+        continue;
+      } 
+
+      // Filtro por nombre si está presente
+      if (nombre) {
+        const persona = await Cazador.findById(transaccion.persona) || await Mercader.findById(transaccion.persona);
+        if (!persona || persona.nombre !== nombre) {
+          continue;
+        }
+      }
+
+      transacciones_encontradas.push(transaccion);
+    }
+
+    res.status(200).send(transacciones_encontradas);
+  } catch (error) {
+    res.status(500).send({ message: "Ha ocurrido un error al buscar las transacciones", error });
+  }
+});
+
+/**
+ * Operación Patch para el router de transacción
+ */
+routerTransaccion.patch("/:id", async (req, res) => {
+  try {
+    const transaccion = await Transaccion.findById(req.params.id);
+    if (!transaccion) {
+      res.status(404).send("No se ha encontrado la transacción");
+      return
+    }
+
+    const { tipo, bienes, personaTipo, persona } = req.body;
+
+    // Revertir el stock de la transacción original
+    if (transaccion.tipo === "Compra") {
+      await updateStock("DCompra", transaccion.bienes);
+    } 
+    else if (transaccion.tipo === "Venta") {
+      await updateStock("DVenta", transaccion.bienes);
+    }
+
+    // Actualizar los datos de la transacción
+    transaccion.tipo = tipo || transaccion.tipo;
+    transaccion.bienes = bienes || transaccion.bienes;
+    transaccion.personaTipo = personaTipo || transaccion.personaTipo;
+    transaccion.persona = persona || transaccion.persona;
+
+    // Validar y actualizar el stock con los nuevos datos
+    if (bienes) {
+      const items = await updateStock(transaccion.tipo, bienes);
+      transaccion.monto = sumarMonto(items);
+    }
+
+    await transaccion.save();
+    res.status(200).send(transaccion);
+  } 
+  catch (error) {
+    res.status(500).send({ message: "Ha ocurrido un error al actualizar la transacción.", error });
+  }
+});
