@@ -7,19 +7,19 @@ import { Transaccion } from '../models/Transaccion.js';
 
 export const routerTransaccion = express.Router();
 
-async function updateStock(tipo: "Compra" | "Venta", bienes: any[]) {
+async function updateStock(tipo: "Compra" | "Venta" | "DCompra" | "DVenta", bienes: any[]) {
   const resultado: Array<{ bien: Types.ObjectId; cantidad: number; costo_unidad: number }> = [];
   // para cada bien obtener los datos
   for (const item of bienes) {
     const { nombre, cantidad } = item;
     // Comprobar que existe
     let bien = await Bien.findOne({ nombre });
-    if (tipo == "Compra") {
+    if (tipo === "Compra" || tipo === "DVenta") {
       if (!bien) {
-        throw { status: 400, message: `Bien "${nombre}" no encontrado en el inventario.` };
+        throw new Error(`Bien "${nombre}" no encontrado en el inventario.`);
       }
       if (bien.stock < cantidad) {
-        throw { status: 400, message: `Stock insuficiente para "${nombre}". Quedan ${bien.stock} unidades.` };
+        throw new Error(`Stock insuficiente para "${nombre}". Quedan ${bien.stock} unidades.`);
       }
       bien.stock -= cantidad;
 
@@ -30,7 +30,7 @@ async function updateStock(tipo: "Compra" | "Venta", bienes: any[]) {
       //}
       resultado.push({ bien: bien._id as Types.ObjectId, cantidad, costo_unidad: bien!.valor });
     }
-    else if (tipo == "Venta") {
+    else if (tipo === "Venta" || tipo === "DCompra") {
       if (!bien) {
         // Creamos un nuevo bien con valores por defecto excepto nombre
         bien = new Bien({
@@ -86,8 +86,29 @@ routerTransaccion.post("/", async (req, res) => {
     res.status(201).send(transaccion)
   }
   catch(err) {
-    const status = (err instanceof Error && 'status' in err) ? (err as any).status || 500 : 500;
-    const message = (err instanceof Error && 'message' in err) ? err.message : 'Error del servidor';
-    res.status(status).send({ error: message });
+    res.status(500).send(err);
+  }
+})
+
+routerTransaccion.delete("/:id", async (req, res) => {
+  try {
+    const transaccion = await Transaccion.findById(req.params.id)
+    if (!transaccion) {
+      res.status(404).send({ error: 'Transaccion no encontrada' });
+    }
+    const bienes = transaccion?.bienes
+    if (transaccion!.tipo === "Compra") {
+      const items = await updateStock("DCompra", bienes!);
+      const transaccion_aux = await Transaccion.findByIdAndDelete(req.params.id)
+      res.status(200).send(transaccion_aux);
+    }
+    else if (transaccion!.tipo === "Venta") {
+      const items = await updateStock("DVenta", bienes!);
+      const transaccion_aux = await Transaccion.findByIdAndDelete(req.params.id)
+      res.status(200).send(transaccion_aux);
+    }
+  }
+  catch(error) {
+    res.status(500).send(error);
   }
 })

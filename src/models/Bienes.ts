@@ -7,7 +7,7 @@
 
 import { Document, Schema, model } from 'mongoose';
 
-interface BienesInterface extends Document {
+export interface BienesInterface extends Document {
   nombre: string
   descripcion: string
   material: "Acero de Mahakam" | "Cuero endurecido" | "Esencia mágica" | "Mutágenos de bestias antiguas"
@@ -20,6 +20,7 @@ const BienesSchema = new Schema<BienesInterface>({
   nombre: {
     type: String,
     required: true,
+    unique: true,
     trim: true,
   },
   descripcion: {
