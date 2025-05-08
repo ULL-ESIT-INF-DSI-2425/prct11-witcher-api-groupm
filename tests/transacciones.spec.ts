@@ -1,12 +1,10 @@
-import { describe, test, expect, afterEach, beforeEach } from "vitest";
+import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import request from 'supertest';
-import mongoose from 'mongoose';
 import { app } from '../src/app.js';
 import { Transaccion } from "../src/models/Transaccion.js";
 import { Cazador } from "../src/models/Cazadores.js";
 import { Mercader } from "../src/models/Mercaderes.js";
 import { Bien } from "../src/models/Bienes.js";
-
 
 let nuevoCazador;
 let nuevoMercader;
@@ -15,17 +13,17 @@ let nuevoBien;
 const cazadorData = {
   nombre: "Jose",
   raza: "Humano",
-  ubicacion: "Bosque Oscuro",
+  ubicacion: "Velen",
 };
 
 const mercaderData = {
   nombre: "Pablo",
   tipo: "Herrero",
-  ubicacion: "Ciudadela",
+  ubicacion: "Velen",
 };
 
 const bienData = {
-  nombre: "Espada de Plata",
+  nombre: "Espada",
   descripcion: "Espada forjada para cazar monstruos",
   material: "Acero de Mahakam",
   peso: 3.5,
@@ -36,7 +34,7 @@ const bienData = {
 beforeEach(async () => {
   await Cazador.deleteMany({ nombre: "Jose" });
   await Mercader.deleteMany({ nombre: "Pablo" });
-  await Bien.deleteMany({ nombre: "Espada de plata" });
+  await Bien.deleteMany({ nombre: "Espada" });
   await Transaccion.deleteMany({});
   nuevoCazador = await new Cazador(cazadorData).save();
   nuevoMercader = await new Mercader(mercaderData).save();
@@ -44,136 +42,185 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  
+  await Cazador.deleteMany({ nombre: "Jose" });
+  await Mercader.deleteMany({ nombre: "Pablo" });
+  await Bien.deleteMany({ nombre: "Espada" });
+  await Transaccion.deleteMany({});
 });
 
-describe("Transacciones API", () => {
+describe('Peticiones POST para las trasacciones', () => {
+  test('POST /transactions - Crear transacción con cazador', async () => {
+    const response = await request(app).post('/transactions').send({
+      "tipo": "Compra",
+      "bienes": [
+        {
+          "nombre": "Espada",
+          "descripcion": "Espada forjada para cazar monstruos",
+          "material": "Acero de Mahakam",
+          "peso": 3.5,
+          "valor": 1500,
+          "cantidad": 2
+        }
+      ],
+      "personaTipo": "Cazador",
+      "persona": `${nuevoCazador._id}`,
+    });
 
-  test("POST /transacciones - Crear una nueva transacción", async () => {
-    // const nuevaTransaccion = {
-    //   tipo: "Compra",
-    //   bienes: [
-    //     {
-    //       nombre: "Espada de acero",
-    //       descripcion: "Espada forjada con acero de Mahakam",
-    //       material: "Acero de Mahakam",
-    //       peso: 3.5,
-    //       valor: 150,
-    //       cantidad: 2,
-    //     },
-    //   ],
-    //   personaTipo: "Cazador",
-    //   persona: new mongoose.Types.ObjectId(),
-    // };
-
-    const response = await request(app)
-      .post("/transacciones")
-      .send({
-        tipo: "Compra",
-          bienes: [
-            {
-              nombre: "Espada de acero",
-              descripcion: "Espada forjada con acero de Mahakam",
-              material: "Acero de Mahakam",
-              peso: 3.5,
-              valor: 150,
-              cantidad: 2,
-            },
-          ],
-          personaTipo: "Cazador",
-          persona: new mongoose.Types.ObjectId(),}
-        ).expect(201);
-
-    // expect(response.status).toBe(201);
-    // expect(response.body).toHaveProperty("_id");
-    // expect(response.body.tipo).toBe(nuevaTransaccion.tipo);
-    // expect(response.body.bienes.length).toBe(1);
+    expect(response.status).toBe(201);
   });
 
-  // test("GET /transacciones/:id - Obtener una transacción por ID", async () => {
-  //   const transaccion = await Transaccion.create({
-  //     tipo: "Venta",
-  //     bienes: [
-  //       {
-  //         nombre: "Armadura de cuero",
-  //         descripcion: "Armadura hecha de cuero endurecido",
-  //         material: "Cuero endurecido",
-  //         peso: 10,
-  //         valor: 300,
-  //         cantidad: 1,
-  //       },
-  //     ],
-  //     personaTipo: "Mercader",
-  //     persona: new mongoose.Types.ObjectId(),
+  // test('POST /merchants - Crear mercader duplicado', async () => {
+  //   const response = await request(app).post('/merchants').send({
+  //     nombre: 'Hattori',
+  //     tipo: 'Herrero',
+  //     ubicacion: 'Novigrado'
   //   });
-
-  //   const response = await request(app).get(`/transacciones/${transaccion._id}`);
-
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toHaveProperty("_id", transaccion._id.toString());
-  //   expect(response.body.tipo).toBe(transaccion.tipo);
-  // });
-
-  // test("PATCH /transacciones/:id - Actualizar una transacción", async () => {
-  //   const transaccion = await Transaccion.create({
-  //     tipo: "Compra",
-  //     bienes: [
-  //       {
-  //         nombre: "Poción mágica",
-  //         descripcion: "Poción hecha con esencia mágica",
-  //         material: "Esencia mágica",
-  //         peso: 0.5,
-  //         valor: 50,
-  //         cantidad: 5,
-  //       },
-  //     ],
-  //     personaTipo: "Cazador",
-  //     persona: new mongoose.Types.ObjectId(),
-  //   });
-
-  //   const actualizacion = {
-  //     bienes: [
-  //       {
-  //         nombre: "Poción mágica",
-  //         descripcion: "Poción mejorada con esencia mágica",
-  //         material: "Esencia mágica",
-  //         peso: 0.5,
-  //         valor: 60,
-  //         cantidad: 6,
-  //       },
-  //     ],
-  //   };
-
-  //   const response = await request(app)
-  //     .patch(`/transacciones/${transaccion._id}`)
-  //     .send(actualizacion);
-
-  //   expect(response.status).toBe(200);
-  //   expect(response.body.bienes[0].valor).toBe(60);
-  //   expect(response.body.bienes[0].cantidad).toBe(6);
-  // });
-
-  // test("DELETE /transacciones/:id - Eliminar una transacción", async () => {
-  //   const transaccion = await Transaccion.create({
-  //     tipo: "Venta",
-  //     bienes: [
-  //       {
-  //         nombre: "Mutágeno antiguo",
-  //         descripcion: "Mutágeno de bestias antiguas",
-  //         material: "Mutágenos de bestias antiguas",
-  //         peso: 1.2,
-  //         valor: 500,
-  //         cantidad: 1,
-  //       },
-  //     ],
-  //     personaTipo: "Mercader",
-  //     persona: new mongoose.Types.ObjectId(),
-  //   });
-
-  //   const response = await request(app).delete(`/transacciones/${transaccion._id}`);
-
-  //   expect(response.status).toBe(200);
-  //   const transaccionEliminada = await Transaccion.findById(transaccion._id);
-  //   expect(transaccionEliminada).toBeNull();
+  //   expect(response.status).toBe(400);
+  //   expect(response.text).toBe('Ya existe un mercader con el mismo nombre');
   // });
 });
+
+
+
+// describe('Peticiones GET para los mercaderes', () => {
+//   test('GET /merchants - Obtener todos los mercaderes, existiendo 2', async () => {
+//     await request(app).post('/merchants').send({
+//       nombre: 'Eibhear Hattori',
+//       tipo: 'Armero',
+//       ubicacion: 'Novigrado'
+//     });
+
+//     const response = await request(app).get('/merchants');
+//     expect(response.status).toBe(200);
+//     expect(response.body.length).toBe(1);
+//     expect(response.body[0].nombre).toBe('Hattori');
+
+//     // Eliminar a los mercaderes
+//     await request(app).delete(`/merchants?nombre=Eibhear%20Hattori`);
+//   });
+
+//   test('GET /merchants - Obtener el mercader buscándolo por su nombre', async () => {
+//     const response = await request(app).get('/merchants?nombre=Hattori');
+//     expect(response.status).toBe(200);
+//     expect(response.body.nombre).toBe('Hattori');
+//   });
+
+//   test('GET /merchants - Error al obtener los mercaderes por la inexistencia de estos', async () => {
+//     await request(app).delete(`/merchants?nombre=Hattori`);
+//     const response = await request(app).get('/merchants');
+//     expect(response.text).toBe('No existe mercader con ese nombre');
+//     expect(response.status).toBe(404);
+//   });
+
+//   test('GET /merchants - Obtener el mercader buscándolo por ID', async () => {
+//     const test = await request(app).get('/merchants?nombre=Hattori');
+//     const response = await request(app).get('/merchants/' + test.body._id);
+//     expect(response.status).toBe(200);
+//     expect(response.body.nombre).toBe('Hattori');
+//   });
+
+//   test('GET /merchants - Error al obtener los mercaderes por su ID', async () => {
+//     const response = await request(app).get('/merchants/123');
+//     expect(response.status).toBe(500);
+//   });
+// });
+
+
+
+// describe('Peticiones PATCH para los mercaderes', () => {
+//   test('PATCH /merchants - Modificar mercader por nombre', async () => {
+//     const response = await request(app).patch('/merchants?nombre=Hattori').send({
+//       tipo: 'Alquimista'
+//     });
+//     expect(response.status).toBe(200);
+//     expect(response.body.nombre).toBe('Hattori');
+//     expect(response.body.tipo).toBe('Alquimista');
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por nombre, no encuentra al mercader', async () => {
+//     const response = await request(app).patch('/merchants?nombre=prueba').send({
+//       tipo: 'Armero'
+//     });
+//     expect(response.status).toBe(400);
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por nombre, no se envía body', async () => {
+//     const response = await request(app).patch('/merchants?nombre=Hattori');
+//     expect(response.status).toBe(400);
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por nombre, campo no permitido', async () => {
+//     const response = await request(app).patch('/merchants?nombre=Hattori').send({
+//       edad: '40'
+//     });
+//     expect(response.status).toBe(400);
+//     expect(response.text).toBe('El cambio no está permitido');
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por nombre, nombre erróneo', async () => {
+//     const response = await request(app).patch('/merchants?nombre=prueba').send({
+//       tipo: 'Armero'
+//     });
+//     expect(response.status).toBe(400);
+//   });
+
+//   test('PATCH /merchants - Modificar mercader por ID', async () => {
+//     const test = await request(app).get('/merchants?nombre=Hattori');
+//     const response = await request(app).patch('/merchants/' + test.body._id).send({
+//       tipo: 'Alquimista'
+//     });
+//     expect(response.status).toBe(200);
+//     expect(response.body.nombre).toBe('Hattori');
+//     expect(response.body.tipo).toBe('Alquimista');
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por ID, no se envía body', async () => {
+//     const test = await request(app).get('/merchants?nombre=Hattori');
+//     const response = await request(app).patch('/merchants/' + test.body._id);
+//     expect(response.status).toBe(400);
+//     expect(response.text).toBe('Los campos a modificar deben ser proporcionados en el cuerpo de la solicitud');
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por ID, no existe el mercader', async () => {
+//     const response = await request(app).patch('/merchants/123').send({
+//       tipo: 'Armero'
+//     });
+//     expect(response.status).toBe(400);
+//   });
+
+//   test('PATCH /merchants - Error al modificar mercader por ID, campo no permitido', async () => {
+//     const test = await request(app).get('/merchants?nombre=Hattori');
+//     const response = await request(app).patch('/merchants/' + test.body._id).send({
+//       edad: '40'
+//     });
+//     expect(response.status).toBe(400);
+//     expect(response.text).toBe('El cambio no está permitido');
+//   });
+// });
+
+// describe('Peticiones DELETE para los mercaderes', () => {
+//   test('DELETE /merchants - Eliminar mercader por nombre', async () => {
+//     const response = await request(app).delete('/merchants?nombre=Hattori');
+//     expect(response.status).toBe(200);
+//     expect(response.body.nombre).toBe('Hattori');
+//   });
+
+//   test('DELETE /merchants - Error al eliminar mercader por nombre, no existe el mercader', async () => {
+//     await request(app).delete('/merchants?nombre=Hattori');
+//     const response = await request(app).delete('/merchants?nombre=Hattori');
+//     expect(response.status).toBe(404);
+//     expect(response.text).toBe('No existe mercader con ese nombre');
+//   });
+
+//   test('DELETE /merchants - Eliminar mercader por ID', async () => {
+//     const test = await request(app).get('/merchants?nombre=Hattori');
+//     const response = await request(app).delete('/merchants/' + test.body._id);
+//     expect(response.status).toBe(200);
+//     expect(response.body.nombre).toBe('Hattori');
+//   });
+
+//   test('DELETE /merchants - Error al eliminar mercader por ID, no existe el mercader', async () => {
+//     const response = await request(app).delete('/merchants/123');
+//     expect(response.status).toBe(400);
+//   });
+// });
