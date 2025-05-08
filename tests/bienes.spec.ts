@@ -1,6 +1,8 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import request from 'supertest';
+import mongoose from 'mongoose';
 import { app } from '../src/app.js';
+import { Bien } from "../src/models/Bienes.js";
 
 
 beforeEach(async () => {
@@ -16,6 +18,9 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await request(app).delete('/goods?nombre=casco');
+  if (mongoose.connection.readyState !== 0) {
+    await Bien.deleteMany({});
+  }
 });
 
 describe('Peticiones POST para los bienes', () => {

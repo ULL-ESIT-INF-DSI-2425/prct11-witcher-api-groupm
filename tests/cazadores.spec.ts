@@ -1,6 +1,8 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
 import request from 'supertest';
+import mongoose from 'mongoose';
 import { app } from '../src/app.js';
+import { Cazador } from "../src/models/Cazadores.js";
 
 beforeEach(async () => {
   await request(app).post('/hunters').send({
@@ -12,6 +14,9 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await request(app).delete('/hunters?nombre=Geralt%20de%20Rivia');
+  if (mongoose.connection.readyState !== 0) {
+    await Cazador.deleteMany({});
+  }
 });
 
 describe('Peticiones POST para los cazadores', () => {

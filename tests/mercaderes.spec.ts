@@ -1,6 +1,8 @@
 import { describe, test, expect, afterEach, beforeEach } from "vitest";
 import request from 'supertest';
+import mongoose from 'mongoose';
 import { app } from '../src/app.js';
+import { Mercader } from "../src/models/Mercaderes.js";
 
 beforeEach(async () => {
   await request(app).post('/merchants').send({
@@ -12,6 +14,9 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await request(app).delete(`/merchants?nombre=Hattori`);
+  if (mongoose.connection.readyState !== 0) {
+    await Mercader.deleteMany({});
+  }
 });
 
 

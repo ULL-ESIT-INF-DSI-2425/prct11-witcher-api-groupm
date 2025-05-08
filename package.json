@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "dev": "tsc-watch --onSuccess \"env-cmd -f ./config/dev.env node dist/app.js\"",
-    "test": "env-cmd -f ./config/test.env vitest run",
+    "test": "env-cmd -f ./config/test.env vitest run index.spec.ts",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
@@ -15,7 +15,7 @@
     "docs:dev": "typedoc --out docs src/index.ts --watch",
     "start": "node dist/app.js",
     "build": "npm install && tsc",
-    "coverage": "vitest --coverage --coverage.include src/**/*.ts"
+    "coverage": "env-cmd -f ./config/test.env vitest run index.spec.ts --coverage"
   },
   "repository": {
     "type": "git",
