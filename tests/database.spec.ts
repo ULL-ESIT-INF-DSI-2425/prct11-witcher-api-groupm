@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import mongoose from "mongoose";
-import { connectDB } from "../src/config/database.js"; 
+import { connectDB } from "../src/db/database.js"; 
 
 describe("Conexión a la base de datos", () => {
 

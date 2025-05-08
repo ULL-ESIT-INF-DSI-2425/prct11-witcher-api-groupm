@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "vitest",
     "lint": "eslint .",
+    "dev": "tsc-watch --onSuccess \"env-cmd -f ./config/dev.env node dist/app.js\"",
+    "test": "env-cmd -f ./config/test.env vitest run",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
@@ -39,6 +40,7 @@
     "eslint-plugin-tsdoc": "^0.4.0",
     "globals": "^15.15.0",
     "prettier": "^3.5.0",
+    "env-cmd": "^10.1.0",
     "supertest": "^7.1.0",
     "tsc-watch": "^6.2.1",
     "typedoc": "^0.27.7",

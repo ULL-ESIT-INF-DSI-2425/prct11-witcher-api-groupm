@@ -1,5 +1,5 @@
 import express from 'express';
-import { connectDB } from './config/database.js'; // Asegúrate de que la ruta sea correcta
+import { connectDB } from './db/database.js'; // Asegúrate de que la ruta sea correcta
 import { defaultRouter } from './routers/defaultRouter.js';
 import { routerBien } from './routers/bienesRouter.js';
 import { routerCazador } from './routers/cazadoresRouter.js';
