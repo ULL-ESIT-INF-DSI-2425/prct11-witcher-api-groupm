@@ -100,7 +100,7 @@ routerTransaccion.post("/", async (req, res) => {
     await transaccion.save()
     res.status(201).send(transaccion)
   }
-  catch(err) {
+  catch(error) {
     res.status(500).send({ message: "Ha ocurrido un error al añadir la transacción.", error });
   }
 })
