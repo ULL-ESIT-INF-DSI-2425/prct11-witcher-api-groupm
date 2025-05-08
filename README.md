@@ -38,7 +38,14 @@ _Corre los tests de transacciones_
 ```bash
 usuario@ull:~$ npm coverage
 ```
-_Corre todos los test con coveralls_ 
+_Corre todos los test con coveralls_
+
+### Link a la API: 
+- [API](https://witcherapi.onrender.com) 
+
+### Link a la base de datos: 
+- [MongoDB](mongodb+srv://witcher:witcherDSI@witcher.ve8uljo.mongodb.net/)
+
 # Universidad
 
 ![Logo ULL](img/marca-universidad-de-la-laguna-original.png)

@@ -170,49 +170,6 @@ describe('Peticiones GET para las transacciones', () => {
 
 
 describe('Peticiones PATCH para las transacciones', () => {
-  // test('PATCH /transactions - Actualizar transacción por ID', async () => {
-  //   const transaccion = await new Transaccion({
-  //     tipo: "Compra",
-  //     bienes: [
-  //       {
-  //         nombre: "Espada",
-  //         descripcion: "Espada forjada para cazar monstruos",
-  //         material: "Acero de Mahakam",
-  //         peso: 3.5,
-  //         valor: 1500,
-  //         cantidad: 2
-  //       }
-  //     ],
-  //     personaTipo: "Cazador",
-  //     persona: `${nuevoCazador._id}`,
-  //   }).save();
-
-  //   const nuevoMercaderVenta = await new Mercader({
-  //     nombre: "Hattori",
-  //     tipo: "Herrero",
-  //     ubicacion: "Novigrado",
-  //   }).save();
-
-  //   const response = await request(app).patch(`/transactions/${transaccion._id}`).send({
-  //     tipo: "Venta",
-  //     bienes: [
-  //     {
-  //       nombre: "Espada",
-  //       descripcion: "Espada mejorada para cazar monstruos",
-  //       material: "Acero de Mahakam refinado",
-  //       peso: 3.0,
-  //       valor: 2000,
-  //       cantidad: 1
-  //     }
-  //     ],
-  //     personaTipo: "Mercader",
-  //     persona: `${nuevoMercaderVenta._id}`,
-  //   });
-
-  //   expect(response.status).toBe(200);
-  //   expect(response.body.tipo).toBe("Venta");
-  // });
-
   test('PATCH /transactions - Error al actualizar transacción, no existe', async () => {
     const response = await request(app).patch('/transactions/123').send({
       tipo: "Venta",
