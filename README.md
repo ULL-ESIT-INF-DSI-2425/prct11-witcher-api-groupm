@@ -28,6 +28,12 @@ usuario@ull:~$ npm test
 ```
 _Corre todos los test_ 
 
+### Ejecución de test transacciones
+```bash
+usuario@ull:~$ npm run testt
+```
+_Corre los tests de transacciones_
+
 ### Ejecución de test con coveralls
 ```bash
 usuario@ull:~$ npm coverage

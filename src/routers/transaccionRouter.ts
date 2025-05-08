@@ -5,6 +5,8 @@ import { Bien } from '../models/Bienes.js';
 import { Types } from 'mongoose';
 import { Transaccion } from '../models/Transaccion.js';
 
+import mongoose from 'mongoose';
+
 export const routerTransaccion = express.Router();
 
 /**
@@ -110,6 +112,12 @@ routerTransaccion.post("/", async (req, res) => {
  */
 routerTransaccion.delete("/:id", async (req, res) => {
   try {
+    // Validamos si el ID es válido
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(404).send({ error: "Transacción no encontrada" });
+      return;
+    }
+
     const transaccion = await Transaccion.findById(req.params.id)
     if (!transaccion) {
       res.status(404).send({ error: 'Transaccion no encontrada' });
@@ -136,16 +144,22 @@ routerTransaccion.delete("/:id", async (req, res) => {
  */
 routerTransaccion.get("/:id", async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(404).send({ error: "Transacción no encontrada" });
+      return;
+    }
+
     const transaccion = await Transaccion.findById(req.params.id);
     if (!transaccion) {
-      res.status(404).send("Transacción no encontrada");
+      res.status(404).send({ error: "Transacción no encontrada" });
+      return;
     }
     res.status(200).send(transaccion);
   }
   catch (error) {
     res.status(500).send({ message: "Ha ocurrido un error al buscar la transacción por ID", error });
   }
-})
+});
 
 /**
  * Operación Get para el router de transacción a través de query
@@ -190,6 +204,12 @@ routerTransaccion.get("/", async (req, res) => {
  */
 routerTransaccion.patch("/:id", async (req, res) => {
   try {
+    // Validamos si el ID es válido
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(404).send({ error: "Transacción no encontrada" });
+      return;
+    }
+    
     const transaccion = await Transaccion.findById(req.params.id);
     if (!transaccion) {
       res.status(404).send("No se ha encontrado la transacción");
