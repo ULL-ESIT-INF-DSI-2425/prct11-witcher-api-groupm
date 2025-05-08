@@ -13,6 +13,7 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "docs": "typedoc --out docs src/index.ts",
+    "doc": "typedoc",
     "docs:dev": "typedoc --out docs src/index.ts --watch",
     "start": "node dist/app.js",
     "build": "npm install && tsc",
